@@ -13,19 +13,29 @@ odb = openOdb(path=odb_name+'.odb', readOnly=False)
 #
 ##### Parameters for gauss integration####
 # coordinate of integration point
-ipcoor = 0.577350269189626
+#$ipcoor = 0.577350269189626
+ipcoor= 0.7745966692414834
 # gauss weight
-gweight = 1.
+#$gweight = 1.
+gweight_1 = 0.8888888888888889 #gauss weight for coordinate 0
+gweight_2 = 0.5555555555555556 #gauss weight for coordinate 0.7745966692414834
 ##########################################
 # initialize local coordinates of integration points
-allxi =  [ -ipcoor, ipcoor, -ipcoor, ipcoor, -ipcoor, ipcoor, -ipcoor, ipcoor]
-alleta =  [ -ipcoor, -ipcoor, ipcoor, ipcoor, -ipcoor, -ipcoor, ipcoor, ipcoor]
-allzeta = [ -ipcoor, -ipcoor, -ipcoor, -ipcoor, ipcoor, ipcoor, ipcoor, ipcoor]
+#$allxi =  [ -ipcoor, ipcoor, -ipcoor, ipcoor, -ipcoor, ipcoor, -ipcoor, ipcoor]
+#$alleta =  [ -ipcoor, -ipcoor, ipcoor, ipcoor, -ipcoor, -ipcoor, ipcoor, ipcoor]
+#$allzeta = [ -ipcoor, -ipcoor, -ipcoor, -ipcoor, ipcoor, ipcoor, ipcoor, ipcoor]
+allxi =  [ -ipcoor, 0, ipcoor, -ipcoor, 0, ipcoor, -ipcoor, 0, ipcoor, -ipcoor, 0, ipcoor, -ipcoor, 0, ipcoor, -ipcoor, 0, ipcoor, -ipcoor, 0, ipcoor, -ipcoor, 0, ipcoor, -ipcoor, 0,, ipcoor]
+alleta =  [ -ipcoor, -ipcoor, -ipcoor, 0, 0, 0, ipcoor, ipcoor, ipcoor, -ipcoor, -ipcoor, -ipcoor, 0, 0, 0, ipcoor, ipcoor, ipcoor, -ipcoor, -ipcoor, -ipcoor, 0, 0, 0, ipcoor, ipcoor, ipcoor]
+allzeta = [ -ipcoor, -ipcoor, -ipcoor, -ipcoor, -ipcoor, -ipcoor, -ipcoor, -ipcoor, -ipcoor, 0, 0, 0, 0, 0, 0, 0, 0, 0, ipcoor, ipcoor, ipcoor, ipcoor, ipcoor, ipcoor, ipcoor, ipcoor, ipcoor]
+
 # initialize local coordinates of nodes
-allnodexi = [ -1., 1., 1., -1., -1., 1., 1., -1.]
-allnodeeta = [ -1., -1., 1., 1., -1., -1., 1., 1. ]
-allnodezeta = [ -1., -1., -1., -1., 1., 1., 1., 1. ]
-# Kronecker delta
+#$allnodexi = [ -1., 1., 1., -1., -1., 1., 1., -1.]
+#$allnodeeta = [ -1., -1., 1., 1., -1., -1., 1., 1. ]
+#$allnodezeta = [ -1., -1., -1., -1., 1., 1., 1., 1. ]
+allnodexi = [ -1., 1., 1., -1., -1., 1., 1., -1., 0., 1., 0., -1., 0., 1., 0., -1., -1., 1., 1., -1. ]
+allnodeeta = [ -1., -1., 1., 1., -1., -1., 1., 1., -1., 0., 1., 0., -1., 0., 1., 0., -1., -1., 1., 1. ]
+allnodezeta = [ -1., -1., -1., -1., 1., 1., 1., 1., -1., -1., -1., -1., 1., 1., 1., 1., 0., 0., 0., 0. ]
+# Kronecker delta 
 kronkj = [[ 1., 0., 0.],[0., 1., 0.],[0., 0., 1.]]
 #
 for partkey in odb.parts.keys():
@@ -48,6 +58,7 @@ for partkey in odb.parts.keys():
         firsttime = 0
         indexfield = []
         for elem in part.elements:
+            #$indexfield.append([0,0,0,0,0,0,0,0])
             indexfield.append([0,0,0,0,0,0,0,0])
         for s in odb.steps.keys():
 	    step = odb.steps[s]
@@ -72,7 +83,8 @@ for partkey in odb.parts.keys():
                     Gelnode.append([[0., 0., 0.], [0., 0., 0.], [0., 0., 0.], [0., 0., 0.], [0., 0., 0.], [0., 0., 0.], [0., 0., 0.],[0., 0., 0.]])
                 for elem in part.elements:
 #                    print elem.label
-                    for Gp in range(8):
+                    #$for Gp in range(8):
+                    for Gp in range(27):
 # Get values at integration point
                         index = indexfield[elem.label-1][Gp]
                         stress = frame.fieldOutputs['S'].values[index].data
@@ -102,13 +114,13 @@ for partkey in odb.parts.keys():
                         eta = alleta[Gp]
                         zeta = allzeta[Gp]
 #                        print xi
-#                        print eta
+#                        print etaindexfield.append([0,0,0,0,0,0,0,0])
 #                        print zeta
 # 2. local coordinates of nodes and local partial derivatives of shape functions
-                        Nxi = [0., 0., 0., 0., 0., 0., 0.,0.]
-                        Neta = [0., 0., 0., 0., 0., 0., 0.,0.]
-                        Nzeta = [0., 0., 0., 0., 0., 0., 0.,0.]
-                        for node in range(8):
+                        Nxi = [0., 0., 0., 0., 0., 0., 0.,0.,0., 0., 0., 0., 0., 0., 0.,0.,0., 0., 0., 0.]
+                        Neta = [0., 0., 0., 0., 0., 0., 0.,0.,0., 0., 0., 0., 0., 0., 0.,0.,0., 0., 0., 0.]
+                        Nzeta = [0., 0., 0., 0., 0., 0., 0.,0.,0., 0., 0., 0., 0., 0., 0.,0.,0., 0., 0., 0.]
+                        for node in range(20):
                             nodexi = allnodexi[node]
                             nodeeta = allnodeeta[node]
                             nodezeta = allnodezeta[node]
@@ -117,9 +129,21 @@ for partkey in odb.parts.keys():
 #                            print nodeeta
 #                            print nodezeta
 #                            print (1./8.)*nodexi*(1.+nodeeta*eta)*(1.+nodezeta*zeta)
-                            Nxi[node] = (1./8.)*nodexi*(1.+nodeeta*eta)*(1.+nodezeta*zeta)
-                            Neta[node] = (1./8.)*(1.+nodexi*xi)*nodeeta*(1.+nodezeta*zeta)
-                            Nzeta[node] = (1./8.)*(1.+nodexi*xi)*(1.+nodeeta*eta)*nodezeta
+                            if(nodexi!=0 and nodeeta!=0 and nodezeta!=0):
+                                #$Nxi[node] = (1./8.)*nodexi*(1.+nodeeta*eta)*(1.+nodezeta*zeta)
+                                Nxi[node]= (1./8.)*nodexi*(1.+nodeeta*eta)*(1.+nodezeta*zeta)*(nodexi*xi+nodeeta*eta+nodezeta*zeta-2) + (1./8.)*(1.+nodexi*xi)*(1.+nodeeta*eta)*(1.+nodezeta*zeta)*(nodexi)
+                                #$Neta[node] = (1./8.)*(1.+nodexi*xi)*nodeeta*(1.+nodezeta*zeta)
+                                Nxi[node]= (1./8.)*(1.+nodexi*xi)*(nodeeta)*(1.+nodezeta*zeta)*(nodexi*xi+nodeeta*eta+nodezeta*zeta-2) + (1./8.)*(1.+nodexi*xi)*(1.+nodeeta*eta)*(1.+nodezeta*zeta)*(nodeeta)
+                                #$Nzeta[node] = (1./8.)*(1.+nodexi*xi)*(1.+nodeeta*eta)*nodezeta
+                                Nxi[node]= (1./8.)*(1.+nodexi*xi)*(1.+nodeeta*eta)*nodezeta*(nodexi*xi+nodeeta*eta+nodezeta*zeta-2) + (1./8.)*(1.+nodexi*xi)*(1.+nodeeta*eta)*(1.+nodezeta*zeta)*(nodezeta)
+                            elif(nodexi==0):
+                                Nxi[node] = (-1./2.)*nodexi*(1.+nodeeta*eta)*(1.+nodezeta*zeta)
+                            elif(nodeeta==0):
+                                Nxi[node]= (-1./2.)*(1.+nodexi*xi)*(nodeeta)*(1.+nodezeta*zeta)
+                            elif(nodeeta==0):
+                                Nxi[node]= (-1./2.)*(1.+nodexi*xi)*(1.+nodeeta*eta)*nodezeta
+
+
 #                            print 'shape functions'
 #                            print Nxi[node]
 #                            print Neta[node]
