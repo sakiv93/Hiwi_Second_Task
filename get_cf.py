@@ -133,15 +133,21 @@ for partkey in odb.parts.keys():
                                 #$Nxi[node] = (1./8.)*nodexi*(1.+nodeeta*eta)*(1.+nodezeta*zeta)
                                 Nxi[node]= (1./8.)*nodexi*(1.+nodeeta*eta)*(1.+nodezeta*zeta)*(nodexi*xi+nodeeta*eta+nodezeta*zeta-2) + (1./8.)*(1.+nodexi*xi)*(1.+nodeeta*eta)*(1.+nodezeta*zeta)*(nodexi)
                                 #$Neta[node] = (1./8.)*(1.+nodexi*xi)*nodeeta*(1.+nodezeta*zeta)
-                                Nxi[node]= (1./8.)*(1.+nodexi*xi)*(nodeeta)*(1.+nodezeta*zeta)*(nodexi*xi+nodeeta*eta+nodezeta*zeta-2) + (1./8.)*(1.+nodexi*xi)*(1.+nodeeta*eta)*(1.+nodezeta*zeta)*(nodeeta)
+                                Neta[node]= (1./8.)*(1.+nodexi*xi)*(nodeeta)*(1.+nodezeta*zeta)*(nodexi*xi+nodeeta*eta+nodezeta*zeta-2) + (1./8.)*(1.+nodexi*xi)*(1.+nodeeta*eta)*(1.+nodezeta*zeta)*(nodeeta)
                                 #$Nzeta[node] = (1./8.)*(1.+nodexi*xi)*(1.+nodeeta*eta)*nodezeta
-                                Nxi[node]= (1./8.)*(1.+nodexi*xi)*(1.+nodeeta*eta)*nodezeta*(nodexi*xi+nodeeta*eta+nodezeta*zeta-2) + (1./8.)*(1.+nodexi*xi)*(1.+nodeeta*eta)*(1.+nodezeta*zeta)*(nodezeta)
+                                Nzeta[node]= (1./8.)*(1.+nodexi*xi)*(1.+nodeeta*eta)*nodezeta*(nodexi*xi+nodeeta*eta+nodezeta*zeta-2) + (1./8.)*(1.+nodexi*xi)*(1.+nodeeta*eta)*(1.+nodezeta*zeta)*(nodezeta)
                             elif(nodexi==0):
-                                Nxi[node] = (-1./2.)*nodexi*(1.+nodeeta*eta)*(1.+nodezeta*zeta)
+                                Nxi[node] = (1./4.)*(-2.*xi)*(1.+nodeeta*eta)*(1.+nodezeta*zeta)
+                                Neta[node] = (1./4.)*(1.- xi*xi)*(nodeeta)*(1.+nodezeta*zeta)
+                                Nzeta[node]= (1./4.)*(1.- xi*xi)*(1.+nodeeta*eta)*(nodezeta)
                             elif(nodeeta==0):
-                                Nxi[node]= (-1./2.)*(1.+nodexi*xi)*(nodeeta)*(1.+nodezeta*zeta)
+                                Nxi[node]= (1./4.)*(nodexi)*(1.- eta*eta)*(1.+nodezeta*zeta)
+                                Neta[node] = (1./4.)*(1.+nodexi*xi)*(-2.*eta)*(1.+nodezeta*zeta)
+                                Nzeta[node]= (1./4.)*(1.+nodexi*xi)*(1. - eta*eta)*(nodezeta)
                             elif(nodeeta==0):
-                                Nxi[node]= (-1./2.)*(1.+nodexi*xi)*(1.+nodeeta*eta)*nodezeta
+                                Nxi[node]= (1./4.)*(nodexi)*(1.+nodeeta*eta)*(1.- zeta*zeta)
+                                Neta[node] = (1./4.)*(1.+nodexi*xi)*(nodeeta)*(1.- zeta*zeta)
+                                Nzeta[node]= (1./4.)*(1.+nodexi*xi)*(1.+nodeeta*eta)*(-2.*zeta)
 
 
 #                            print 'shape functions'
@@ -191,8 +197,9 @@ for partkey in odb.parts.keys():
                         Jinv[2][1] = (1./detJ) * ( J[0][1] * J[2][0] - J[0][0] * J[2][1])
                         Jinv[2][2] = (1./detJ) * ( J[0][0] * J[1][1] - J[0][1] * J[1][0])
 # 6. get global partial derivatives of shape functions
-                        Nj = [[0., 0., 0., 0., 0., 0., 0., 0.],[0., 0., 0., 0., 0., 0., 0., 0.],[0., 0., 0., 0., 0., 0., 0., 0.]]
-                        for node in range(8):
+                        Nj = [[0., 0., 0., 0., 0., 0., 0.,0.,0., 0., 0., 0., 0., 0., 0.,0.,0., 0., 0., 0.],[0., 0., 0., 0., 0., 0., 0., 0.],[0., 0., 0., 0., 0., 0., 0., 0.]]
+                        #$for node in range(8):
+                        for node in range(20):
                             Nj[0][node] = Jinv[0][0] * Nxi[node] +Jinv[0][1] * Neta[node] +Jinv[0][2] * Nzeta[node]
                             Nj[1][node] = Jinv[1][0] * Nxi[node] +Jinv[1][1] * Neta[node] +Jinv[1][2] * Nzeta[node]
                             Nj[2][node] = Jinv[2][0] * Nxi[node] +Jinv[2][1] * Neta[node] +Jinv[2][2] * Nzeta[node]
