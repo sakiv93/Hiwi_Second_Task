@@ -19,12 +19,23 @@ ipcoor= 0.7745966692414834
 #$gweight = 1.
 gweight_1 = 0.8888888888888889 #gauss weight for coordinate 0
 gweight_2 = 0.5555555555555556 #gauss weight for coordinate 0.7745966692414834
+
+gweight_xi =  [ -gweight_2, gweight_1, gweight_2, -gweight_2, gweight_1, gweight_2, -gweight_2, gweight_1, gweight_2, -gweight_2, gweight_1, gweight_2, -gweight_2, gweight_1, gweight_2, -gweight_2, gweight_1, gweight_2, -gweight_2, gweight_1, gweight_2, -gweight_2, gweight_1, gweight_2, -gweight_2, gweight_1, gweight_2]
+gweight_eta = [ -gweight_2, -gweight_2, -gweight_2, gweight_1, gweight_1, gweight_1, gweight_2, gweight_2, gweight_2, -gweight_2, -gweight_2, -gweight_2, gweight_1, gweight_1, gweight_1, gweight_2, gweight_2, gweight_2, -gweight_2, -gweight_2, -gweight_2, gweight_1, gweight_1, gweight_1, gweight_2, gweight_2, gweight_2]
+gweight_eta = [ -gweight_2, -gweight_2, -gweight_2, -gweight_2, -gweight_2, -gweight_2, -gweight_2, -gweight_2, -gweight_2, gweight_1, gweight_1, gweight_1, gweight_1, gweight_1, gweight_1, gweight_1, gweight_1, gweight_1, gweight_2, gweight_2, gweight_2, gweight_2, gweight_2, gweight_2, gweight_2, gweight_2, gweight_2]
+
+#Product of gauss weights
+gweight = [-0.17146776,  0.27434842,  0.17146776, -0.17146776,  0.27434842,  0.17146776,
+ -0.17146776,  0.27434842,  0.17146776, -0.43895748,  0.70233196,  0.43895748,
+  -0.43895748,  0.70233196,  0.43895748, -0.43895748,  0.70233196,  0.43895748,
+   -0.17146776,  0.27434842,  0.17146776, -0.17146776,  0.27434842,  0.17146776,
+    -0.17146776,  0.27434842,  0.17146776]
 ##########################################
 # initialize local coordinates of integration points
 #$allxi =  [ -ipcoor, ipcoor, -ipcoor, ipcoor, -ipcoor, ipcoor, -ipcoor, ipcoor]
 #$alleta =  [ -ipcoor, -ipcoor, ipcoor, ipcoor, -ipcoor, -ipcoor, ipcoor, ipcoor]
 #$allzeta = [ -ipcoor, -ipcoor, -ipcoor, -ipcoor, ipcoor, ipcoor, ipcoor, ipcoor]
-allxi =  [ -ipcoor, 0, ipcoor, -ipcoor, 0, ipcoor, -ipcoor, 0, ipcoor, -ipcoor, 0, ipcoor, -ipcoor, 0, ipcoor, -ipcoor, 0, ipcoor, -ipcoor, 0, ipcoor, -ipcoor, 0, ipcoor, -ipcoor, 0,, ipcoor]
+allxi =  [ -ipcoor, 0, ipcoor, -ipcoor, 0, ipcoor, -ipcoor, 0, ipcoor, -ipcoor, 0, ipcoor, -ipcoor, 0, ipcoor, -ipcoor, 0, ipcoor, -ipcoor, 0, ipcoor, -ipcoor, 0, ipcoor, -ipcoor, 0, ipcoor]
 alleta =  [ -ipcoor, -ipcoor, -ipcoor, 0, 0, 0, ipcoor, ipcoor, ipcoor, -ipcoor, -ipcoor, -ipcoor, 0, 0, 0, ipcoor, ipcoor, ipcoor, -ipcoor, -ipcoor, -ipcoor, 0, 0, 0, ipcoor, ipcoor, ipcoor]
 allzeta = [ -ipcoor, -ipcoor, -ipcoor, -ipcoor, -ipcoor, -ipcoor, -ipcoor, -ipcoor, -ipcoor, 0, 0, 0, 0, 0, 0, 0, 0, 0, ipcoor, ipcoor, ipcoor, ipcoor, ipcoor, ipcoor, ipcoor, ipcoor, ipcoor]
 
@@ -59,14 +70,14 @@ for partkey in odb.parts.keys():
         indexfield = []
         for elem in part.elements:
             #$indexfield.append([0,0,0,0,0,0,0,0])
-            indexfield.append([0,0,0,0,0,0,0,0])
+            indexfield.append([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
         for s in odb.steps.keys():
 	    step = odb.steps[s]
 	    for frame in step.frames:
 # If first time get positions of elements and gauss points in field output
                 if (firsttime == 0) :
                     print 'start get positions of elements and gauss points in field output'
-                    for index in range(len(part.elements)*8):
+                    for index in range(len(part.elements)*27):
                         indexelement = frame.fieldOutputs['S'].values[index].elementLabel - 1
                         indexgauss = frame.fieldOutputs['S'].values[index].integrationPoint - 1
                         indexfield[indexelement][indexgauss] = index
@@ -80,7 +91,9 @@ for partkey in odb.parts.keys():
 # Gelnode - contribution of element to configurational force at node
                 Gelnode=[]
                 for elem in part.elements:
-                    Gelnode.append([[0., 0., 0.], [0., 0., 0.], [0., 0., 0.], [0., 0., 0.], [0., 0., 0.], [0., 0., 0.], [0., 0., 0.],[0., 0., 0.]])
+                    Gelnode.append([[0., 0., 0.], [0., 0., 0.], [0., 0., 0.], [0., 0., 0.], [0., 0., 0.], [0., 0., 0.], [0., 0., 0.],[0., 0., 0.],
+                    [0., 0., 0.], [0., 0., 0.], [0., 0., 0.], [0., 0., 0.], [0., 0., 0.], [0., 0., 0.], [0., 0., 0.],[0., 0., 0.],
+                    [0., 0., 0.], [0., 0., 0.], [0., 0., 0.], [0., 0., 0.]])
                 for elem in part.elements:
 #                    print elem.label
                     #$for Gp in range(8):
@@ -144,7 +157,8 @@ for partkey in odb.parts.keys():
                                 Nxi[node]= (1./4.)*(nodexi)*(1.- eta*eta)*(1.+nodezeta*zeta)
                                 Neta[node] = (1./4.)*(1.+nodexi*xi)*(-2.*eta)*(1.+nodezeta*zeta)
                                 Nzeta[node]= (1./4.)*(1.+nodexi*xi)*(1. - eta*eta)*(nodezeta)
-                            elif(nodeeta==0):
+                            #$elif(nodezeta==0):
+                            else:
                                 Nxi[node]= (1./4.)*(nodexi)*(1.+nodeeta*eta)*(1.- zeta*zeta)
                                 Neta[node] = (1./4.)*(1.+nodexi*xi)*(nodeeta)*(1.- zeta*zeta)
                                 Nzeta[node]= (1./4.)*(1.+nodexi*xi)*(1.+nodeeta*eta)*(-2.*zeta)
@@ -197,7 +211,9 @@ for partkey in odb.parts.keys():
                         Jinv[2][1] = (1./detJ) * ( J[0][1] * J[2][0] - J[0][0] * J[2][1])
                         Jinv[2][2] = (1./detJ) * ( J[0][0] * J[1][1] - J[0][1] * J[1][0])
 # 6. get global partial derivatives of shape functions
-                        Nj = [[0., 0., 0., 0., 0., 0., 0.,0.,0., 0., 0., 0., 0., 0., 0.,0.,0., 0., 0., 0.],[0., 0., 0., 0., 0., 0., 0., 0.],[0., 0., 0., 0., 0., 0., 0., 0.]]
+                        Nj = [[0., 0., 0., 0., 0., 0., 0.,0.,0., 0., 0., 0., 0., 0., 0.,0.,0., 0., 0., 0.]
+                        ,[0., 0., 0., 0., 0., 0., 0.,0.,0., 0., 0., 0., 0., 0., 0.,0.,0., 0., 0., 0.]
+                        ,[0., 0., 0., 0., 0., 0., 0.,0.,0., 0., 0., 0., 0., 0., 0.,0.,0., 0., 0., 0.]]
                         #$for node in range(8):
                         for node in range(20):
                             Nj[0][node] = Jinv[0][0] * Nxi[node] +Jinv[0][1] * Neta[node] +Jinv[0][2] * Nzeta[node]
@@ -208,7 +224,8 @@ for partkey in odb.parts.keys():
                         ESTkj = [[0., 0., 0.],[0., 0., 0.],[0., 0., 0.]]
 # 1.a get global derivatives of displacement ui,k
                         uik = [[0., 0., 0.],[0., 0., 0.],[0., 0., 0.]]
-                        for node in range(8):
+                        #$for node in range(8):
+                        for node in range(20):
                             nodeindex = elem.connectivity[node]-1
 #                            print nodeindex
                             u = frame.fieldOutputs['U'].values[nodeindex].data
@@ -226,13 +243,14 @@ for partkey in odb.parts.keys():
                                             - stressij[2][j] * uik[2][k]\
                                             + eflx[j] * epg[k]
 # 2. calculate Gelnode
-                        for node in range(8):
+                        #$for node in range(8):
+                        for node in range(20):
                             for k in range(3):
-                                labelelem = elem.label-1
+                                labelelem = elem.label-1, [0., 0., 0.], [0., 0., 0.], [0., 0., 0.],[0., 0., 0.]
                                 Gelnode[labelelem][node][k] = Gelnode[labelelem][node][k]\
-                                                               + ESTkj[k][0] * Nj[0][node] * gweight * detJ\
-                                                               + ESTkj[k][1] * Nj[1][node] * gweight * detJ\
-                                                               + ESTkj[k][2] * Nj[2][node] * gweight * detJ
+                                                               + ESTkj[k][0] * Nj[0][node] * gweight[Gp] * detJ\
+                                                               + ESTkj[k][1] * Nj[1][node] * gweight[Gp] * detJ\
+                                                               + ESTkj[k][2] * Nj[2][node] * gweight[Gp] * detJ
 #
 ###############################################################################################
 #
